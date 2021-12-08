@@ -90,18 +90,24 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     //function that returns true if the hardware of camera is turned on
     public func cameraOn() -> Bool {
+        //gets the camera id from the function below
         guard let cam = findCamId() else {
             return false
         }
+        //address for property
         var prop = CMIOObjectPropertyAddress(
             mSelector: CMIOObjectPropertySelector(kCMIODevicePropertyDeviceIsRunningSomewhere),
             mScope: CMIOObjectPropertyScope(kCMIOObjectPropertyScopeWildcard),
             mElement: CMIOObjectPropertyElement(kCMIOObjectPropertyElementWildcard)
         )
+        //variable to store the answer
         var isCamOn = false
+        //data variables initialised to 0
         var dataSize: UInt32 = 0
         var dataUsed: UInt32 = 0
+        //variable containing an OSStatus indicating success or failure.
         var ans = CMIOObjectGetPropertyDataSize(cam, &prop, 0, nil, &dataSize)
+        //querie to check, if there is no hardware error, if the camera is on or off
         if ans == OSStatus(kCMIOHardwareNoError) {
             if let data = malloc(Int(dataSize)) {
                 ans = CMIOObjectGetPropertyData(cam, &prop, 0, nil, dataSize, &dataUsed, data)
@@ -122,9 +128,9 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         //data variables initialised to 0
         var dataSize: UInt32 = 0
         var dataUsed: UInt32 = 0
-        // find the size of the data for the given property.
+        //variable containing an OSStatus indicating success or failure.
         var ans = CMIOObjectGetPropertyDataSize(CMIOObjectID(kCMIOObjectSystemObject), &prop, 0, nil, &dataSize)
-       
+
         var devices: UnsafeMutableRawPointer?
         repeat {
             //makes pointer point to nil
