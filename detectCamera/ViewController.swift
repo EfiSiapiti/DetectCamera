@@ -23,6 +23,10 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         if ((error?.localizedDescription) == nil) {
             print("file is finished")
         }
+        else
+        {
+            print("Error with file")
+        }
     }
     //main function of the application that runs after view is loaded
     override func viewDidLoad() {
@@ -199,7 +203,6 @@ private extension ViewController {
         let interval=Date().addingTimeInterval(5)
         runLoop.run(until: interval)
         fileOut.stopRecording()
-        print("File finished")
         captSession.stopRunning()
     }
 }
