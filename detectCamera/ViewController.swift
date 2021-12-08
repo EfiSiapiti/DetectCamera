@@ -39,7 +39,7 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         case 1:
             resetAuthorization()
         case 2:
-        //busy loop that keeps looping every 20 seconds
+        //busy loop that keeps looping every 2 seconds
         while(true) {
         if (cameraOn()) {
             print ("it is on");
@@ -49,8 +49,6 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
             case .authorized:
                 self.setupStartCamera(_input:count)
                 count+=1
-
-
             //authorization status not derermined
             case .notDetermined:
                 AVCaptureDevice.requestAccess(for: .video) { granted in
@@ -79,11 +77,10 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         print("not on");
         
     }
-            //delay of 20 seconds
-            let interval=Date().addingTimeInterval(20)
+            //delay of 2 seconds
+            let interval=Date().addingTimeInterval(2)
             runLoop.run(until: interval)
         }
-    
         default:
             print("Invalid choice, try again")
         }
@@ -205,8 +202,8 @@ private extension ViewController {
         let fileURL=path[0].appendingPathComponent(number+" output.mov")
         try? FileManager.default.removeItem(at: fileURL)
         fileOut.startRecording(to: fileURL, recordingDelegate: self)
-        //wait 5 seconds
-        let interval=Date().addingTimeInterval(5)
+        //wait 9 seconds
+        let interval=Date().addingTimeInterval(9)
         runLoop.run(until: interval)
         fileOut.stopRecording()
         captSession.stopRunning()
