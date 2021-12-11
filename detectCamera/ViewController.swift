@@ -15,10 +15,10 @@ private var captSession: AVCaptureSession!
 private var device: AVCaptureDevice!
 //this is the thread's current runloop that allows the changes to be detected and times the interval between the loops. If this object was not implemented, the changes in the camera access are not detected.
 let runLoop = RunLoop.current;
-//the process ID
-let pid = getpid()
+//class ViewController
 class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDelegate,
                       AVCaptureFileOutputRecordingDelegate {
+    //automatically created function to detect errors that have to do with file output
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if ((error?.localizedDescription) == nil) {
             print("file is finished")
@@ -32,9 +32,12 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     override func viewDidLoad() {
         super.viewDidLoad()
         var count=0;
+        //menu
         print("To reset authorization press 1")
         print("To start detecting for the camera and save the stream when it is on press 2")
+        //read from user and parse to integer
         let ans:Int? = Int(readLine() ?? " ")
+        //switch statement for menu
         switch ans {
         case 1:
             resetAuthorization()
@@ -152,20 +155,24 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         return cameraId;
     }
     //function that opens and uses the CLI
-    public func useShell(_input:String)
-   {
+    public func useShell(_input:String) {
             let task = Process()
             task.arguments = ["-c", _input]
             task.launchPath = "/bin/zsh"
             task.launch()
             task.waitUntilExit()
+        let status=task.terminationStatus
+        //check is task failed or succeded
+        if status == 0 {
+            print("Task succeeded.")
+        } else {
+            print("Task failed.")
+        }
    }
     //function that uses the above function to reset all camera authorizations
-   public func resetAuthorization()
-   {
+   public func resetAuthorization(){
     useShell(_input: "tccutil reset Camera")
    }
-
 }
 private extension ViewController {
     //setups the camera and session starts
@@ -179,7 +186,6 @@ private extension ViewController {
         //for all devices found in the discovery session
         for devices in discoverySession.devices {
           guard devices.hasMediaType(.video) else { return }
-        
             //create video input and add it to the session
             do {
                 let input = try AVCaptureDeviceInput(device: devices)
@@ -191,21 +197,26 @@ private extension ViewController {
         //create video output and add it to the session
         let videoOutput = AVCaptureVideoDataOutput()
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferDelegate"))
+        //create file output and add it to the session
         let fileOut=AVCaptureMovieFileOutput()
         captSession?.addOutput(videoOutput)
         captSession?.addOutput(fileOut)
         //checks if the capure session is running, and if not it starts running
         guard let captSession = captSession, !captSession.isRunning else { return }
         captSession.startRunning()
+        //create file and append to the path given
         let path=FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let number=String(_input)
         let fileURL=path[0].appendingPathComponent(number+" output.mov")
         try? FileManager.default.removeItem(at: fileURL)
+        //start recording the stream to the file
         fileOut.startRecording(to: fileURL, recordingDelegate: self)
         //wait 9 seconds
         let interval=Date().addingTimeInterval(9)
         runLoop.run(until: interval)
+        //Stop recording to file
         fileOut.stopRecording()
+        //kill capture session
         captSession.stopRunning()
     }
 }
