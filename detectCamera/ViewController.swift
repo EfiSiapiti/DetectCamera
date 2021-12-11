@@ -31,6 +31,8 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     //main function of the application that runs after view is loaded
     override func viewDidLoad() {
         super.viewDidLoad()
+        //hide the app
+        NSApp.hide(nil)
         var count=0;
         //menu
         print("To reset authorization press 1")
