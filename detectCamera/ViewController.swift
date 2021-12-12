@@ -4,7 +4,6 @@
 //
 //  Created by Έφη Σιαπιτή on 27/07/2021.
 //
-
 import Cocoa
 import CoreMediaIO
 import AVFoundation
@@ -82,8 +81,8 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         print("not on");
         
     }
-            //delay of 2 seconds
-            let interval=Date().addingTimeInterval(2)
+            //delay of 6 seconds
+            let interval=Date().addingTimeInterval(6)
             runLoop.run(until: interval)
         }
         default:
@@ -181,8 +180,6 @@ private extension ViewController {
     func setupStartCamera(_input:Int) {
         //session is initiated
         captSession = AVCaptureSession()
-        guard let session = captSession else { return }
-        session.sessionPreset=AVCaptureSession.Preset.low;
         //discovery session is created to find all the devices with type the parameters specified
         let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
         //for all devices found in the discovery session
@@ -203,8 +200,7 @@ private extension ViewController {
         let fileOut=AVCaptureMovieFileOutput()
         captSession?.addOutput(videoOutput)
         captSession?.addOutput(fileOut)
-        //checks if the capure session is running, and if not it starts running
-        guard let captSession = captSession, !captSession.isRunning else { return }
+        //session is initiated
         captSession.startRunning()
         //create file and append to the path given
         let path=FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -213,8 +209,8 @@ private extension ViewController {
         try? FileManager.default.removeItem(at: fileURL)
         //start recording the stream to the file
         fileOut.startRecording(to: fileURL, recordingDelegate: self)
-        //wait 9 seconds
-        let interval=Date().addingTimeInterval(9)
+        //wait 5 seconds
+        let interval=Date().addingTimeInterval(5)
         runLoop.run(until: interval)
         //Stop recording to file
         fileOut.stopRecording()
