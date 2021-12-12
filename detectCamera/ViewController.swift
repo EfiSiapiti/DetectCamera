@@ -178,7 +178,7 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
 private extension ViewController {
     //setups the camera and session starts
     func setupStartCamera(_input:Int) {
-        //session is initiated
+        //session is created
         captSession = AVCaptureSession()
         //discovery session is created to find all the devices with type the parameters specified
         let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
