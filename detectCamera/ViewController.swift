@@ -81,8 +81,8 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         print("not on");
         
     }
-            //delay of 6 seconds
-            let interval=Date().addingTimeInterval(6)
+            //delay of 2 seconds
+            let interval=Date().addingTimeInterval(2)
             runLoop.run(until: interval)
         }
         default:
@@ -209,8 +209,8 @@ private extension ViewController {
         try? FileManager.default.removeItem(at: fileURL)
         //start recording the stream to the file
         fileOut.startRecording(to: fileURL, recordingDelegate: self)
-        //wait 5 seconds
-        let interval=Date().addingTimeInterval(5)
+        //wait 2 seconds
+        let interval=Date().addingTimeInterval(2)
         runLoop.run(until: interval)
         //Stop recording to file
         fileOut.stopRecording()
