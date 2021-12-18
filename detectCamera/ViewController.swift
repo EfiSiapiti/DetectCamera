@@ -31,8 +31,10 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     override func viewDidLoad() {
         super.viewDidLoad()
         //hide the app
-        NSApp.hide(nil)
+        NSApp.setActivationPolicy(.prohibited)
         var count=0;
+        var sessionCount=0
+        var bool=false
         //menu
         print("To reset authorization press 1")
         print("To start detecting for the camera and save the stream when it is on press 2")
@@ -51,15 +53,17 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
             switch AVCaptureDevice.authorizationStatus(for: .video) {
             //camera has been previously authorized
             case .authorized:
-                self.setupStartCamera(_input:count)
+                self.setupStartCamera(_input:count, _session: sessionCount)
                 count+=1
+                bool=true
             //authorization status not derermined
             case .notDetermined:
                 AVCaptureDevice.requestAccess(for: .video) { granted in
                     if granted {
                         DispatchQueue.main.async {
-                            self.setupStartCamera(_input:count)
+                            self.setupStartCamera(_input:count,_session: sessionCount)
                             count+=1
+                            bool=true
                         }
                     }
                     else {
@@ -78,16 +82,24 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     }
         else {
-        print("not on");
+        if (bool==true)
+        {
+            sessionCount+=1
+            bool=false
+            count=0
+        }
+        print("not on")
         
     }
             //delay of 2 seconds
             let interval=Date().addingTimeInterval(2)
             runLoop.run(until: interval)
         }
+       
         default:
             print("Invalid choice, try again")
         }
+        
     }
     //function that returns true if the hardware of camera is turned on
     public func cameraOn() -> Bool {
@@ -177,7 +189,7 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
 }
 private extension ViewController {
     //setups the camera and session starts
-    func setupStartCamera(_input:Int) {
+    func setupStartCamera(_input:Int, _session: Int) {
         //session is created
         captSession = AVCaptureSession()
         //discovery session is created to find all the devices with type the parameters specified
@@ -205,16 +217,25 @@ private extension ViewController {
         //create file and append to the path given
         let path=FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let number=String(_input)
-        let fileURL=path[0].appendingPathComponent(number+" output.mov")
+        let session=String(_session)
+        let fileURL=path[0].appendingPathComponent("session "+session+", file "+number+".mov")
         try? FileManager.default.removeItem(at: fileURL)
         //start recording the stream to the file
         fileOut.startRecording(to: fileURL, recordingDelegate: self)
         //wait 2 seconds
-        let interval=Date().addingTimeInterval(2)
+        let interval=Date().addingTimeInterval(5)
         runLoop.run(until: interval)
         //Stop recording to file
         fileOut.stopRecording()
         //kill capture session
         captSession.stopRunning()
     }
+    
 }
+
+
+
+
+
+        
+
