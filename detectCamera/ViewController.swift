@@ -12,6 +12,8 @@ import AVFoundation
 private var captSession: AVCaptureSession!
 //this is the physical device
 private var device: AVCaptureDevice!
+//Variable for time interval between captures
+private var wait:Double?
 //this is the thread's current runloop that allows the changes to be detected and times the interval between the loops. If this object was not implemented, the changes in the camera access are not detected.
 let runLoop = RunLoop.current;
 //class ViewController
@@ -45,6 +47,10 @@ class ViewController: NSViewController, AVCaptureVideoDataOutputSampleBufferDele
         case 1:
             resetAuthorization()
         case 2:
+        //interval that the app is going to record at. If user input is not valid,
+        //the number 10 will be used instead.
+        print("What is the interval you want to record at: ")
+            wait=Double(readLine() ?? "10")
         //busy loop that keeps looping every 2 seconds
         while(true) {
         if (cameraOn()) {
@@ -222,8 +228,8 @@ private extension ViewController {
         try? FileManager.default.removeItem(at: fileURL)
         //start recording the stream to the file
         fileOut.startRecording(to: fileURL, recordingDelegate: self)
-        //wait 2 seconds
-        let interval=Date().addingTimeInterval(5)
+        //wait some seconds
+        let interval=Date().addingTimeInterval(wait ?? 10)
         runLoop.run(until: interval)
         //Stop recording to file
         fileOut.stopRecording()
